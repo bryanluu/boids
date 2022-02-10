@@ -184,8 +184,6 @@ class CheckExit(SceneBase):
 
     def SwitchToScene(self, next_scene):
         super().SwitchToScene(next_scene)
-        if isinstance(next_scene, TestScene):
-            next_scene.starttime = time.time()
 
 
 class Pause(SceneBase):
