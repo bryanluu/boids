@@ -2,6 +2,9 @@ import pygame
 import colors
 import numpy as np
 import time
+from linalg import Vector3D
+from boids import *
+import utilities
 
 class SceneBase:
     def __init__(self):
@@ -260,6 +263,12 @@ class BoidsScene(SceneBase):
         SceneBase.__init__(self)
         # initialize RNG
         self.rng = np.random.default_rng()
+
+        info = pygame.display.Info()
+        screenWidth, screenHeight = info.current_w, info.current_h
+
+        self.num_boids = 10
+        self.boids = [Boid(Vector3D(screenWidth * self.rng.random(), screenHeight * self.rng.random(), 100 * self.rng.random())) for i in range(self.num_boids)]
         
     # only needs to be called once throughout main loop
     def initGraphics(self, screen):
@@ -285,4 +294,7 @@ class BoidsScene(SceneBase):
         screenWidth, screenHeight = info.current_w, info.current_h
 
         self.screen.fill(colors.BLACK)
+        
+        for boid in self.boids:
+            boid.draw(self.screen)
         pygame.display.flip()
