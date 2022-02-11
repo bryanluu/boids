@@ -19,5 +19,5 @@ class Boid(utilities.DrawSprite):
 
   @property
   def color(self):
-    return *colors.WHITE, 255 * self.pos.Z
+    return *colors.WHITE, self.pos.Z
 

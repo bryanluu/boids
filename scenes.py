@@ -259,7 +259,8 @@ class Pause(SceneBase):
 
 
 class BoidsScene(SceneBase):
-    N_BOIDS = 10
+    N_BOIDS = 10 # number of Boids to simulate
+    DEPTH = 255 # must be 255 for it to work with alpha
 
     def __init__(self):
         SceneBase.__init__(self)
@@ -274,7 +275,7 @@ class BoidsScene(SceneBase):
         for i in range(BoidsScene.N_BOIDS):
             x = screenWidth * self.rng.random()
             y = screenHeight * self.rng.random()
-            z = self.rng.random()
+            z = BoidsScene.DEPTH * self.rng.random()
             boid = Boid(Vector3D(x, y, z))
             self.boids.add(boid)
 
