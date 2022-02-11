@@ -6,20 +6,18 @@ import utilities
 
 class Boid(utilities.DrawSprite):
   def __init__(self, pos):
+    # Call the parent class (Sprite) constructor
+    pygame.sprite.Sprite.__init__(self)
+
     self.pos = pos
     self.width = 5
-    self._width = None
+    self.rect = pygame.Rect(self.pos.X, self.pos.Y, self.width, self.width)
+    self.image = pygame.Surface([self.width, self.width], flags=pygame.SRCALPHA)
+
+  def update(self):
+    self.image.fill(self.color)
 
   @property
   def color(self):
-    return *colors.WHITE, self.pos.Z
+    return *colors.WHITE, 255 * self.pos.Z
 
-  @property
-  def rect(self):
-    if self._width != self.width:
-      self._width = self.width
-      self._rect = pygame.Rect(self.pos.X, self.pos.Y, self.width, self.width)
-    return self._rect
-
-  def draw(self, screen):
-    screen.fill(self.color, self.rect, pygame.BLEND_RGBA_ADD)

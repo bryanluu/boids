@@ -259,6 +259,8 @@ class Pause(SceneBase):
 
 
 class BoidsScene(SceneBase):
+    N_BOIDS = 10
+
     def __init__(self):
         SceneBase.__init__(self)
         # initialize RNG
@@ -267,9 +269,15 @@ class BoidsScene(SceneBase):
         info = pygame.display.Info()
         screenWidth, screenHeight = info.current_w, info.current_h
 
-        self.num_boids = 10
-        self.boids = [Boid(Vector3D(screenWidth * self.rng.random(), screenHeight * self.rng.random(), 100 * self.rng.random())) for i in range(self.num_boids)]
-        
+        self.boids = pygame.sprite.Group()
+
+        for i in range(BoidsScene.N_BOIDS):
+            x = screenWidth * self.rng.random()
+            y = screenHeight * self.rng.random()
+            z = self.rng.random()
+            boid = Boid(Vector3D(x, y, z))
+            self.boids.add(boid)
+
     # only needs to be called once throughout main loop
     def initGraphics(self, screen):
         SceneBase.initGraphics(self, screen)
@@ -288,6 +296,7 @@ class BoidsScene(SceneBase):
     def Update(self):
         info = pygame.display.Info()
         screenWidth, screenHeight = info.current_w, info.current_h
+        self.boids.update()
 
     def Render(self):
         info = pygame.display.Info()
@@ -295,6 +304,5 @@ class BoidsScene(SceneBase):
 
         self.screen.fill(colors.BLACK)
         
-        for boid in self.boids:
-            boid.draw(self.screen)
+        self.boids.draw(self.screen)
         pygame.display.flip()

@@ -57,4 +57,4 @@ def run_game(width, height, fps, starting_scene):
 #==============================================================================
 # The rest is code where you implement your game using the Scenes model
 
-run_game(3000, 2000, 60, Start())
+run_game(1280, 720, 60, Start())
