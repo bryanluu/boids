@@ -1,5 +1,10 @@
 import pygame
 
+# Math function to normalize (set between 0 and 1) a value given its range
+def normalize(value, value_range):
+  low, high = value_range
+  return (value - low)/(high - low)
+
 # Sprite class with a draw function
 class DrawSprite(pygame.sprite.Sprite):
   def draw(self, screen):
