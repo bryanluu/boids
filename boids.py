@@ -26,7 +26,8 @@ class Boid(utilities.DrawSprite):
     x = self.left + self.areaWidth * rng.random()
     y = self.top + self.areaHeight * rng.random()
     z = self.back + 200 * rng.random()
-    vx = vy = 5 * (1 + rng.random())
+    vx = 5 * (1 + rng.random())
+    vy = 5 * (1 + rng.random())
     vz = 10 * rng.random()
 
     self.position = Vector3D(x, y, z)
