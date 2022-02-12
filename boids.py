@@ -11,6 +11,7 @@ class Boid(utilities.DrawSprite):
   MAX_SPEED = 10
   PROTECTED_RANGE = 10 # the range at which boids get paranoid of collisions with others
   AVOID_FACTOR = 0.5 # how quickly do boids avoid each other in the protected range?
+  flock = [] # the existing flock of boids
 
   def __init__(self, bounds):
     # Call the parent class (Sprite) constructor
@@ -40,6 +41,8 @@ class Boid(utilities.DrawSprite):
                             self.position.Y - self.width / 2,
                             self.width, self.width)
     self.image = pygame.Surface([self.width, self.width], flags=pygame.SRCALPHA)
+
+    Boid.flock.append(self)
 
   @property
   def color(self):
@@ -71,10 +74,16 @@ class Boid(utilities.DrawSprite):
     self.position.Y = utilities.constrain(self.position.Y, self.top, self.bottom)
     self.position.Z = utilities.constrain(self.position.Z, self.back + (self.areaDepth * 0.5), self.front)
 
-  def calculate_closeness_to(self, other):
-    self.closeness += self.position - other.position
+  def calculate_closeness_to_flock(self):
+    self.closeness = Vector3D.zero()
+    for other in Boid.flock:
+      if self is not other:
+        distance = abs(self.position - other.position)
+        if distance < Boid.PROTECTED_RANGE:
+          self.closeness += self.position - other.position
 
   def avoid_other_boids(self):
+    self.calculate_closeness_to_flock()
     self.velocity += self.closeness * Boid.AVOID_FACTOR
 
   def update(self):

@@ -295,13 +295,6 @@ class BoidsScene(SceneBase):
     def Update(self):
         info = pygame.display.Info()
         screenWidth, screenHeight = info.current_w, info.current_h
-        for boid in self.boids:
-            boid.closeness = Vector3D.zero()
-            for other in self.boids:
-                if boid is not other:
-                    distance = abs(boid.position - other.position)
-                    if distance < Boid.PROTECTED_RANGE:
-                        boid.calculate_closeness_to(other)
         self.boids.update()
 
     def Render(self):
