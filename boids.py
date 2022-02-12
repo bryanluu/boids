@@ -76,34 +76,32 @@ class Boid(utilities.DrawSprite):
     self.position.Y = utilities.constrain(self.position.Y, self.top, self.bottom)
     self.position.Z = utilities.constrain(self.position.Z, self.back + (self.areaDepth * 0.5), self.front)
 
-  def calculate_closeness_to_flock(self):
-    self.closeness = Vector3D.zero()
-    for other in Boid.flock:
-      if self is not other:
-        distance = abs(self.position - other.position)
-        if distance < Boid.PROTECTED_RANGE:
-          self.closeness += self.position - other.position
-
   def avoid_other_boids(self):
-    self.calculate_closeness_to_flock()
     self.velocity += self.closeness * Boid.AVOID_FACTOR
 
   def follow_neighbors(self):
+    if self.num_neighbors > 0:
+      self.avg_velocity /= self.num_neighbors
+      self.velocity += (self.avg_velocity - self.velocity) * Boid.MATCHING_FACTOR
+
+  def fly_with_flock(self):
+    self.closeness = Vector3D.zero()
     self.avg_velocity = Vector3D.zero()
     self.num_neighbors = 0
     for other in Boid.flock:
       if self is not other:
         distance = abs(self.position - other.position)
+        if distance < Boid.PROTECTED_RANGE:
+          self.closeness += self.position - other.position
         if distance < Boid.VISIBLE_RANGE:
           self.avg_velocity += other.velocity
           self.num_neighbors += 1
-    if self.num_neighbors > 0:
-      self.avg_velocity /= self.num_neighbors
-      self.velocity += (self.avg_velocity - self.velocity) * Boid.MATCHING_FACTOR
-
-  def update(self):
     self.avoid_other_boids()
     self.follow_neighbors()
+
+
+  def update(self):
+    self.fly_with_flock()
     self.avoid_edges()
     self.constrain_speed()
     self.position += self.velocity
