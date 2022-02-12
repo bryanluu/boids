@@ -5,13 +5,14 @@ import numpy as np
 import utilities
 
 class Boid(utilities.DrawSprite):
-  def __init__(self, pos):
+  def __init__(self, pos, vel):
     # Call the parent class (Sprite) constructor
     pygame.sprite.Sprite.__init__(self)
 
-    self.pos = pos
+    self.position = pos
+    self.velocity = vel
     self.width = 5
-    self.rect = pygame.Rect(self.pos.X, self.pos.Y, self.width, self.width)
+    self.rect = pygame.Rect(self.position.X, self.position.Y, self.width, self.width)
     self.image = pygame.Surface([self.width, self.width], flags=pygame.SRCALPHA)
 
   def update(self):
@@ -19,5 +20,5 @@ class Boid(utilities.DrawSprite):
 
   @property
   def color(self):
-    return *colors.WHITE, self.pos.Z
+    return *colors.WHITE, self.position.Z
 

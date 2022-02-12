@@ -276,7 +276,11 @@ class BoidsScene(SceneBase):
             x = screenWidth * self.rng.random()
             y = screenHeight * self.rng.random()
             z = BoidsScene.DEPTH * self.rng.random()
-            boid = Boid(Vector3D(x, y, z))
+            vx = vy = 5 * (1 + self.rng.random())
+            vz = 10 * self.rng.random()
+            pos = Vector3D(x, y, z)
+            vel = Vector3D(vx, vy, vz)
+            boid = Boid(pos, vel)
             self.boids.add(boid)
 
     # only needs to be called once throughout main loop
