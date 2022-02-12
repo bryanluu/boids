@@ -63,10 +63,15 @@ class Boid(utilities.DrawSprite):
     if self.position.Z > self.front - Boid.MARGIN:
       self.velocity.Z -= Boid.TURN_FACTOR
 
+  def constrain_position(self):
+    self.position.X = utilities.constrain(self.position.X, self.left, self.right)
+    self.position.Y = utilities.constrain(self.position.Y, self.top, self.bottom)
+    self.position.Z = utilities.constrain(self.position.Z, self.back + (self.areaDepth * 0.5), self.front)
   def update(self):
     self.avoid_edges()
     self.constrain_speed()
     self.position += self.velocity
+    self.constrain_position()
     self.rect = pygame.Rect(self.position.X - self.width / 2, 
                             self.position.Y - self.width / 2,
                             self.width, self.width)

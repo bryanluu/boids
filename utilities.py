@@ -5,6 +5,10 @@ def normalize(value, value_range):
   low, high = value_range
   return (value - low)/(high - low)
 
+# Math function to constrain value between limits
+def constrain(value, low, high):
+  return min(max(value, low), high)
+
 # Sprite class with a draw function
 class DrawSprite(pygame.sprite.Sprite):
   def draw(self, screen):
