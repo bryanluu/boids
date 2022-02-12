@@ -9,8 +9,8 @@ class Boid(utilities.DrawSprite):
   TURN_FACTOR = 1 # how quickly do boids avoid edges?
   MIN_SPEED = 5
   MAX_SPEED = 10
-  PROTECTED_RANGE = 10 # the range at which boids get paranoid of collisions with others
-  AVOID_FACTOR = 0.5 # how quickly do boids avoid each other in the protected range?
+  PROTECTED_RANGE = 20 # the range at which boids get paranoid of collisions with others
+  AVOID_FACTOR = 0.2 # how quickly do boids avoid each other in the protected range?
   flock = [] # the existing flock of boids
 
   def __init__(self, bounds):
@@ -28,7 +28,7 @@ class Boid(utilities.DrawSprite):
 
     x = self.left + self.areaWidth * rng.random()
     y = self.top + self.areaHeight * rng.random()
-    z = self.back + 200 * rng.random()
+    z = self.back + 100 + 155 * rng.random()
     vx = 5 * (1 + rng.random())
     vy = 5 * (1 + rng.random())
     vz = 10 * rng.random()
