@@ -10,9 +10,10 @@ class Boid(utilities.DrawSprite):
   MIN_SPEED = 10
   MAX_SPEED = 15
   PROTECTED_RANGE = 20 # the range at which boids get paranoid of collisions with others
-  AVOID_FACTOR = 0.2 # how quickly do boids avoid each other in the protected range?
+  AVOID_FACTOR = 0.5 # how quickly do boids avoid each other in the protected range?
   VISIBLE_RANGE = 50 # this boid will follow boids within this range
-  MATCHING_FACTOR = 0.5 # how quickly does this boid follow others
+  MATCHING_FACTOR = 0.5 # how quickly does this boid follow others?
+  CENTERING_FACTOR = 0.1 # how much does this boid stay with others?
   flock = [] # the existing flock of boids
 
   def __init__(self, bounds):
@@ -30,7 +31,7 @@ class Boid(utilities.DrawSprite):
 
     x = self.left + self.areaWidth * rng.random()
     y = self.top + self.areaHeight * rng.random()
-    z = self.back + 100 + 155 * rng.random()
+    z = self.back + self.areaDepth * rng.random()
     vx = 5 * (1 + rng.random())
     vy = 5 * (1 + rng.random())
     vz = 10 * rng.random()
@@ -82,11 +83,14 @@ class Boid(utilities.DrawSprite):
   def follow_neighbors(self):
     if self.num_neighbors > 0:
       self.avg_velocity /= self.num_neighbors
+      self.avg_position /= self.num_neighbors
       self.velocity += (self.avg_velocity - self.velocity) * Boid.MATCHING_FACTOR
+      self.velocity += (self.avg_position - self.position) * Boid.CENTERING_FACTOR
 
   def fly_with_flock(self):
     self.closeness = Vector3D.zero()
     self.avg_velocity = Vector3D.zero()
+    self.avg_position = Vector3D.zero()
     self.num_neighbors = 0
     for other in Boid.flock:
       if self is not other:
@@ -95,6 +99,7 @@ class Boid(utilities.DrawSprite):
           self.closeness += self.position - other.position
         if distance < Boid.VISIBLE_RANGE:
           self.avg_velocity += other.velocity
+          self.avg_position += other.position
           self.num_neighbors += 1
     self.avoid_other_boids()
     self.follow_neighbors()
