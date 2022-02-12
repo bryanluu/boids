@@ -5,6 +5,8 @@ import numpy as np
 import utilities
 
 class Boid(utilities.DrawSprite):
+  MARGIN = 50 # how close to edges are boids allowed?
+  TURN_FACTOR = 5  # how quickly do boids avoid edges?
   MIN_SPEED = 5
   MAX_SPEED = 10
 
@@ -37,15 +39,30 @@ class Boid(utilities.DrawSprite):
   def color(self):
     return *colors.WHITE, self.position.Z
 
-  def update(self):
-    self.constrain_speed()
-    self.position += self.velocity
-    self.rect = pygame.Rect(self.position.X, self.position.Y, self.width, self.width)
-    self.image.fill(self.color)
-
   def constrain_speed(self):
     speed = abs(self.velocity)
     if speed > Boid.MAX_SPEED:
       self.velocity = (self.velocity * Boid.MAX_SPEED) / speed
     if speed < Boid.MIN_SPEED:
       self.velocity = (self.velocity * Boid.MIN_SPEED) / speed
+
+  def avoid_edges(self):
+    if self.position.X < self.left + Boid.MARGIN:
+      self.velocity.X += Boid.TURN_FACTOR
+    if self.position.X > self.right - Boid.MARGIN:
+      self.velocity.X -= Boid.TURN_FACTOR
+    if self.position.Y < self.top + Boid.MARGIN:
+      self.velocity.Y += Boid.TURN_FACTOR
+    if self.position.Y > self.bottom - Boid.MARGIN:
+      self.velocity.Y -= Boid.TURN_FACTOR
+    if self.position.Z < self.back + Boid.MARGIN:
+      self.velocity.Z += Boid.TURN_FACTOR
+    if self.position.Z > self.front - Boid.MARGIN:
+      self.velocity.Z -= Boid.TURN_FACTOR
+
+  def update(self):
+    self.avoid_edges()
+    self.constrain_speed()
+    self.position += self.velocity
+    self.rect = pygame.Rect(self.position.X, self.position.Y, self.width, self.width)
+    self.image.fill(self.color)
