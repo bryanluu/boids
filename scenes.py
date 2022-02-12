@@ -260,7 +260,6 @@ class Pause(SceneBase):
 
 class BoidsScene(SceneBase):
     N_BOIDS = 10 # number of Boids to simulate
-    DEPTH = 255 # must be 255 for it to work with alpha
 
     def __init__(self):
         SceneBase.__init__(self)
@@ -273,14 +272,9 @@ class BoidsScene(SceneBase):
         self.boids = pygame.sprite.Group()
 
         for i in range(BoidsScene.N_BOIDS):
-            x = screenWidth * self.rng.random()
-            y = screenHeight * self.rng.random()
-            z = BoidsScene.DEPTH * self.rng.random()
-            vx = vy = 5 * (1 + self.rng.random())
-            vz = 10 * self.rng.random()
-            pos = Vector3D(x, y, z)
-            vel = Vector3D(vx, vy, vz)
-            boid = Boid(pos, vel)
+            boid = Boid([(0, screenWidth),
+                         (0, screenHeight),
+                         (0, 255)]) # depth must be 255 at most for alpha to work correctly
             self.boids.add(boid)
 
     # only needs to be called once throughout main loop
