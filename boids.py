@@ -18,15 +18,15 @@ class Boid(utilities.DrawSprite):
     self.rect = pygame.Rect(self.position.X, self.position.Y, self.width, self.width)
     self.image = pygame.Surface([self.width, self.width], flags=pygame.SRCALPHA)
 
+  @property
+  def color(self):
+    return *colors.WHITE, self.position.Z
+
   def update(self):
     self.constrain_speed()
     self.position += self.velocity
     self.rect = pygame.Rect(self.position.X, self.position.Y, self.width, self.width)
     self.image.fill(self.color)
-
-  @property
-  def color(self):
-    return *colors.WHITE, self.position.Z
 
   def constrain_speed(self):
     speed = abs(self.velocity)
@@ -34,4 +34,3 @@ class Boid(utilities.DrawSprite):
       self.velocity = (self.velocity * Boid.MAX_SPEED) / speed
     if speed < Boid.MIN_SPEED:
       self.velocity = (self.velocity * Boid.MIN_SPEED) / speed
-
