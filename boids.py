@@ -7,8 +7,8 @@ import utilities
 class Boid(utilities.DrawSprite):
   MARGIN = 50 # how close to edges are boids allowed?
   TURN_FACTOR = 1 # how quickly do boids avoid edges?
-  MIN_SPEED = 5
-  MAX_SPEED = 10
+  MIN_SPEED = 10
+  MAX_SPEED = 15
   PROTECTED_RANGE = 20 # the range at which boids get paranoid of collisions with others
   AVOID_FACTOR = 0.2 # how quickly do boids avoid each other in the protected range?
   VISIBLE_RANGE = 50 # this boid will follow boids within this range
