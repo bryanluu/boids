@@ -9,6 +9,8 @@ class Boid(utilities.DrawSprite):
   TURN_FACTOR = 1 # how quickly do boids avoid edges?
   MIN_SPEED = 5
   MAX_SPEED = 10
+  PROTECTED_RANGE = 10 # the range at which boids get paranoid of collisions with others
+  AVOID_FACTOR = 0.5 # how quickly do boids avoid each other in the protected range?
 
   def __init__(self, bounds):
     # Call the parent class (Sprite) constructor
@@ -32,6 +34,7 @@ class Boid(utilities.DrawSprite):
 
     self.position = Vector3D(x, y, z)
     self.velocity = Vector3D(vx, vy, vz)
+    self.closeness = Vector3D.zero()
     self.width = 5
     self.rect = pygame.Rect(self.position.X - self.width / 2, 
                             self.position.Y - self.width / 2,
@@ -67,7 +70,15 @@ class Boid(utilities.DrawSprite):
     self.position.X = utilities.constrain(self.position.X, self.left, self.right)
     self.position.Y = utilities.constrain(self.position.Y, self.top, self.bottom)
     self.position.Z = utilities.constrain(self.position.Z, self.back + (self.areaDepth * 0.5), self.front)
+
+  def calculate_closeness_to(self, other):
+    self.closeness += self.position - other.position
+
+  def avoid_other_boids(self):
+    self.velocity += self.closeness * Boid.AVOID_FACTOR
+
   def update(self):
+    self.avoid_other_boids()
     self.avoid_edges()
     self.constrain_speed()
     self.position += self.velocity
