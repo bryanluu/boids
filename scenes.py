@@ -259,7 +259,7 @@ class Pause(SceneBase):
 
 
 class BoidsScene(SceneBase):
-    N_BOIDS = 10 # number of Boids to simulate
+    N_BOIDS = 50 # number of Boids to simulate
 
     def __init__(self):
         SceneBase.__init__(self)
