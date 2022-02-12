@@ -6,7 +6,7 @@ import utilities
 
 class Boid(utilities.DrawSprite):
   MARGIN = 50 # how close to edges are boids allowed?
-  TURN_FACTOR = 1  # how quickly do boids avoid edges?
+  TURN_FACTOR = 1 # how quickly do boids avoid edges?
   MIN_SPEED = 5
   MAX_SPEED = 10
 
@@ -33,7 +33,9 @@ class Boid(utilities.DrawSprite):
     self.position = Vector3D(x, y, z)
     self.velocity = Vector3D(vx, vy, vz)
     self.width = 5
-    self.rect = pygame.Rect(self.position.X, self.position.Y, self.width, self.width)
+    self.rect = pygame.Rect(self.position.X - self.width / 2, 
+                            self.position.Y - self.width / 2,
+                            self.width, self.width)
     self.image = pygame.Surface([self.width, self.width], flags=pygame.SRCALPHA)
 
   @property
@@ -65,5 +67,7 @@ class Boid(utilities.DrawSprite):
     self.avoid_edges()
     self.constrain_speed()
     self.position += self.velocity
-    self.rect = pygame.Rect(self.position.X, self.position.Y, self.width, self.width)
+    self.rect = pygame.Rect(self.position.X - self.width / 2, 
+                            self.position.Y - self.width / 2,
+                            self.width, self.width)
     self.image.fill(self.color)
