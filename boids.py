@@ -13,7 +13,7 @@ class Boid(utilities.DrawSprite):
   AVOID_FACTOR = 0.5 # how quickly do boids avoid each other in the protected range?
   VISIBLE_RANGE = 50 # this boid will follow boids within this range
   MATCHING_FACTOR = 0.5 # how quickly does this boid follow others?
-  CENTERING_FACTOR = 0.1 # how much does this boid stay with others?
+  CENTERING_FACTOR = 0.005 # how much does this boid stay with others?
   flock = [] # the existing flock of boids
 
   def __init__(self, bounds):
@@ -69,7 +69,7 @@ class Boid(utilities.DrawSprite):
       self.velocity.Y -= Boid.TURN_FACTOR
     if self.position.Z < self.back + Boid.MARGIN:
       self.velocity.Z += Boid.TURN_FACTOR
-    if self.position.Z > self.front - Boid.MARGIN:
+    if self.position.Z > self.front - 50:
       self.velocity.Z -= Boid.TURN_FACTOR
 
   def constrain_position(self):
