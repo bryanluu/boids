@@ -5,8 +5,8 @@ import numpy as np
 import utilities
 
 class Boid(utilities.DrawSprite):
-  MARGIN = 50 # how close to edges are boids allowed?
-  TURN_FACTOR = 1 # how quickly do boids avoid edges?
+  MARGIN = 100 # how close to edges are boids allowed?
+  TURN_FACTOR = 2 # how quickly do boids avoid edges?
   MIN_SPEED = 10
   MAX_SPEED = 15
   PROTECTED_RANGE = 20 # the range at which boids get paranoid of collisions with others
