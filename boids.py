@@ -11,6 +11,8 @@ class Boid(utilities.DrawSprite):
   MAX_SPEED = 10
   PROTECTED_RANGE = 20 # the range at which boids get paranoid of collisions with others
   AVOID_FACTOR = 0.2 # how quickly do boids avoid each other in the protected range?
+  VISIBLE_RANGE = 50 # this boid will follow boids within this range
+  MATCHING_FACTOR = 1 # how quickly does this boid follow others
   flock = [] # the existing flock of boids
 
   def __init__(self, bounds):
@@ -86,8 +88,22 @@ class Boid(utilities.DrawSprite):
     self.calculate_closeness_to_flock()
     self.velocity += self.closeness * Boid.AVOID_FACTOR
 
+  def follow_neighbors(self):
+    self.avg_velocity = Vector3D.zero()
+    self.num_neighbors = 0
+    for other in Boid.flock:
+      if self is not other:
+        distance = abs(self.position - other.position)
+        if distance < Boid.VISIBLE_RANGE:
+          self.avg_velocity += other.velocity
+          self.num_neighbors += 1
+    if self.num_neighbors > 0:
+      self.avg_velocity /= self.num_neighbors
+      self.velocity += (self.avg_velocity - self.velocity) * Boid.MATCHING_FACTOR
+
   def update(self):
     self.avoid_other_boids()
+    self.follow_neighbors()
     self.avoid_edges()
     self.constrain_speed()
     self.position += self.velocity
