@@ -16,6 +16,8 @@ class Boid(utilities.DrawSprite):
     self.image = pygame.Surface([self.width, self.width], flags=pygame.SRCALPHA)
 
   def update(self):
+    self.position += self.velocity
+    self.rect = pygame.Rect(self.position.X, self.position.Y, self.width, self.width)
     self.image.fill(self.color)
 
   @property
