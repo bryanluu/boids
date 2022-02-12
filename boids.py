@@ -6,7 +6,7 @@ import utilities
 
 class Boid(utilities.DrawSprite):
   MARGIN = 50 # how close to edges are boids allowed?
-  TURN_FACTOR = 5  # how quickly do boids avoid edges?
+  TURN_FACTOR = 1  # how quickly do boids avoid edges?
   MIN_SPEED = 5
   MAX_SPEED = 10
 
