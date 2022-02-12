@@ -12,7 +12,7 @@ class Boid(utilities.DrawSprite):
   PROTECTED_RANGE = 20 # the range at which boids get paranoid of collisions with others
   AVOID_FACTOR = 0.2 # how quickly do boids avoid each other in the protected range?
   VISIBLE_RANGE = 50 # this boid will follow boids within this range
-  MATCHING_FACTOR = 1 # how quickly does this boid follow others
+  MATCHING_FACTOR = 0.5 # how quickly does this boid follow others
   flock = [] # the existing flock of boids
 
   def __init__(self, bounds):
