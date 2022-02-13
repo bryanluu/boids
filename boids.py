@@ -9,10 +9,10 @@ class Boid(utilities.DrawSprite):
   TURN_FACTOR = 2 # how quickly do boids avoid edges?
   MIN_SPEED = 10
   MAX_SPEED = 15
-  PROTECTED_RANGE = 20 # the range at which boids get paranoid of collisions with others
-  AVOID_FACTOR = 0.5 # how quickly do boids avoid each other in the protected range?
+  PROTECTED_RANGE = 10 # the range at which boids get paranoid of collisions with others
+  AVOID_FACTOR = 0.1 # how quickly do boids avoid each other in the protected range?
   VISIBLE_RANGE = 50 # this boid will follow boids within this range
-  MATCHING_FACTOR = 0.5 # how quickly does this boid follow others?
+  MATCHING_FACTOR = 0.2 # how quickly does this boid follow others?
   CENTERING_FACTOR = 0.005 # how much does this boid stay with others?
   flock = [] # the existing flock of boids
 
