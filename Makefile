@@ -6,36 +6,36 @@ CC := clang
 # set the compiler flags
 CFLAGS := `sdl2-config --libs --cflags` -ggdb3 -O0 --std=c99 -Wall -lSDL2_image -lm
 # add header files here
-HDRS :=
+HDRS := 
 
 # add source files here
-SRCS := #file-name.c
+SRCS := boids.c #file-name.c
 
 # generate names of object files
 OBJS := $(SRCS:.c=.o)
 
 # name of executable
-EXEC := #name your executable file
+EXEC := boids #name your executable file
 
 # default recipe
 all: $(EXEC)
  
 showfont: showfont.c Makefile
-    $(CC) -o $@ $@.c $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $@.c $(CFLAGS) $(LIBS)
 
 glfont: glfont.c Makefile
-    $(CC) -o $@ $@.c $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $@.c $(CFLAGS) $(LIBS)
 
 # recipe for building the final executable
 $(EXEC): $(OBJS) $(HDRS) Makefile
-    $(CC) -o $@ $(OBJS) $(CFLAGS)
+	$(CC) -o bin/$@ bin/$(OBJS) $(CFLAGS)
 
 # recipe for building object files
-#$(OBJS): $(@:.o=.c) $(HDRS) Makefile
-#    $(CC) -o $@ $(@:.o=.c) -c $(CFLAGS)
+$(OBJS): $(@:.o=.c) $(HDRS) Makefile
+	$(CC) -o bin/$@ src/c/$(@:.o=.c) -c $(CFLAGS)
 
 # recipe to clean the workspace
 clean:
-    rm -f $(EXEC) $(OBJS)
+	rm -f bin/$(EXEC) bin/$(OBJS)
 
 .PHONY: all clean
