@@ -17,7 +17,7 @@
 #define FRONT_MARGIN 50 // margin at the front of screen
 #define TURN_FACTOR 2 // how quickly do boids avoid edges?
 
-struct image
+struct boid
 {
   SDL_Surface* surface;
   SDL_Texture* tex;
@@ -26,10 +26,11 @@ struct image
   Vector3D velocity;
 };
 
-typedef struct image Boid;
+typedef struct boid Boid;
 
 void placeBoid(Boid* boid);
 int initBoid(SDL_Renderer* rend, Boid* boid);
 void constrainSpeed(Boid* boid);
 void avoidEdges(Boid* boid);
+void constrainPosition(Boid* boid);
 void updateBoid(Boid* boid, Boid* flock);

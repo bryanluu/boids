@@ -177,6 +177,25 @@ void constrainSpeed(Boid* boid)
 }
 
 /*
+    Constrain Boid to always stay within screen
+ */
+void constrainPosition(Boid* boid)
+{
+    if (boid->position.x < 0)
+        boid->position.x = 0;
+    if (boid->position.x > SCREEN_WIDTH)
+        boid->position.x = SCREEN_WIDTH;
+    if (boid->position.y < 0)
+        boid->position.y = 0;
+    if (boid->position.y > SCREEN_HEIGHT)
+        boid->position.y = SCREEN_HEIGHT;
+    if (boid->position.z < 0)
+        boid->position.z = 0;
+    if (boid->position.z > SCREEN_DEPTH)
+        boid->position.z = SCREEN_DEPTH;
+}
+
+/*
     Update loop for indivual Boid
  */
 void updateBoid(Boid* boid, Boid* flock)
@@ -184,6 +203,7 @@ void updateBoid(Boid* boid, Boid* flock)
     avoidEdges(boid);
     constrainSpeed(boid);
     boid->position = add(boid->position, boid->velocity);
+    constrainPosition(boid);
     boid->rect.x = boid->position.x;
     boid->rect.y = boid->position.y;
 }
