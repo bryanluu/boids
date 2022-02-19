@@ -43,3 +43,11 @@ Vector3D multiply(Vector3D u, double s)
   result.z = u.z * s;
   return result;
 }
+
+// zero the vector
+void zero(Vector3D* u)
+{
+  u->x = 0;
+  u->y = 0;
+  u->z = 0;
+}

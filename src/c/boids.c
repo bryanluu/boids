@@ -196,10 +196,31 @@ void constrainPosition(Boid* boid)
 }
 
 /*
+    Avoid other boids
+ */
+void avoidOthers(Boid* boid, Boid* flock)
+{
+    zero(&boid->closeness);
+    for (int i = 0; i < N_BOIDS; i++)
+    {
+        Boid* other = (flock + i);
+        if (boid != other)
+        {
+            Vector3D diff = sub(boid->position, other->position);
+            double dist = length(diff);
+            if (dist < PROTECTED_RANGE)
+                boid->closeness = add(boid->closeness, diff);
+        }
+    }
+    boid->velocity = add(boid->velocity, multiply(boid->closeness, AVOID_FACTOR));
+}
+
+/*
     Update loop for indivual Boid
  */
 void updateBoid(Boid* boid, Boid* flock)
 {
+    avoidOthers(boid, flock);
     avoidEdges(boid);
     constrainSpeed(boid);
     boid->position = add(boid->position, boid->velocity);

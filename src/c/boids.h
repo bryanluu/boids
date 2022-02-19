@@ -8,7 +8,7 @@
 #define SCREEN_DEPTH 255 // needs to be 255 for alpha
 
 // Tunable parameters
-#define N_BOIDS 50 // number of boids to simulate
+#define N_BOIDS 100 // number of boids to simulate
 #define BOID_SIZE 5 // how big are the boids?
 #define MIN_SPEED 10 // min speed of a boid
 #define MAX_SPEED 15 // max speed of a boid
@@ -16,6 +16,8 @@
 #define MARGIN 100 // margins at which to start turning
 #define FRONT_MARGIN 50 // margin at the front of screen
 #define TURN_FACTOR 2 // how quickly do boids avoid edges?
+#define PROTECTED_RANGE 50 // the range at which boids avoid others
+#define AVOID_FACTOR 1 // how quickly do boids avoid each other? 
 
 struct boid
 {
@@ -24,6 +26,7 @@ struct boid
   SDL_Rect rect;
   Vector3D position;
   Vector3D velocity;
+  Vector3D closeness;
 };
 
 typedef struct boid Boid;
@@ -33,4 +36,5 @@ int initBoid(SDL_Renderer* rend, Boid* boid);
 void constrainSpeed(Boid* boid);
 void avoidEdges(Boid* boid);
 void constrainPosition(Boid* boid);
+void avoidOthers(Boid* boid, Boid* flock);
 void updateBoid(Boid* boid, Boid* flock);
