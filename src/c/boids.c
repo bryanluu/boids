@@ -7,10 +7,10 @@ int main(int argc, char *argv[])
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         printf("error initializing SDL: %s\n", SDL_GetError());
     }
-    SDL_Window* win = SDL_CreateWindow("GAME", // creates a window
+    SDL_Window* win = SDL_CreateWindow("Boids", // creates a window
                                     SDL_WINDOWPOS_CENTERED,
                                     SDL_WINDOWPOS_CENTERED,
-                                    1000, 1000, 0);
+                                    SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
     // triggers the program that controls
     // your graphics hardware and sets flags
@@ -22,16 +22,6 @@ int main(int argc, char *argv[])
     // creates a Boid
     Boid boid;
     initBoid(rend, &boid);
-
-    // adjust height and width of our image box.
-    boid.rect.w /= 6;
-    boid.rect.h /= 6;
-
-    // sets initial x-position of object
-    boid.rect.x = (1000 - boid.rect.w) / 2;
-
-    // sets initial y-position of object
-    boid.rect.y = (1000 - boid.rect.h) / 2;
 
     // controls animation loop
     int close = 0;
@@ -126,10 +116,15 @@ int main(int argc, char *argv[])
 int initBoid(SDL_Renderer* rend, Boid* boid)
 {
     int ret;
+    int x, y, z;
+
+    x = rand() % SCREEN_WIDTH;
+    y = rand() % SCREEN_HEIGHT;
+    z = rand() % SCREEN_DEPTH;
 
     // create the surface
-    boid->surface = SDL_CreateRGBSurfaceWithFormat(0, 100, 100, 32, SDL_PIXELFORMAT_RGBA32);
-    ret = SDL_FillRect(boid->surface, NULL, SDL_MapRGBA(boid->surface->format, 255, 0, 0, 255));
+    boid->surface = SDL_CreateRGBSurfaceWithFormat(0, BOID_SIZE, BOID_SIZE, 32, SDL_PIXELFORMAT_RGBA32);
+    ret = SDL_FillRect(boid->surface, NULL, SDL_MapRGBA(boid->surface->format, 255, 255, 255, z));
 
     if (ret)
     {
@@ -144,6 +139,10 @@ int initBoid(SDL_Renderer* rend, Boid* boid)
 
     // connects our texture with rect to control position
     ret = SDL_QueryTexture(boid->tex, NULL, NULL, &(boid->rect.w), &(boid->rect.h));
+
+    // position Boid
+    boid->rect.x = x;
+    boid->rect.y = y;
 
     return ret;
 }
