@@ -29,7 +29,7 @@ $(EXEC): $(OBJS) $(HDRS) Makefile
 	$(CC) -o $(B_DIR)/$@ $(OBJS) $(CFLAGS)
 
 # recipe for building object files
-$(OBJS): $(@:%.c) $(HDRS) Makefile
+$(OBJS): $(@:$(B_DIR)/%.o=$(S_DIR)/%.c) $(HDRS) $(SRCS) Makefile
 	$(CC) -o $@ $(@:$(B_DIR)/%.o=$(S_DIR)/%.c) -c $(CFLAGS)
 
 # recipe to clean the workspace

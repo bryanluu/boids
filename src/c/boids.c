@@ -54,6 +54,12 @@ int main(int argc, char *argv[])
             }
         }
 
+        // update flock
+        for (int i = 0; i < N_BOIDS; i++)
+        {
+            updateBoid(&flock[i], flock);
+        }
+
         // clears the screen
         SDL_RenderClear(rend);
         for (int i = 0; i < N_BOIDS; i++)
@@ -95,6 +101,13 @@ void placeBoid(Boid* boid)
     boid->position.x = rand() % SCREEN_WIDTH;
     boid->position.y = rand() % SCREEN_HEIGHT;
     boid->position.z = rand() % SCREEN_DEPTH;
+    int choice;
+    choice = rand();
+    boid->velocity.x = ((choice % 2) ? 1 : -1) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * ((choice % 1000) / 1000.0));
+    choice = rand();
+    boid->velocity.y = ((choice % 2) ? 1 : -1) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * ((choice % 1000) / 1000.0));
+    choice = rand();
+    boid->velocity.z = ((choice % 2) ? 1 : -1) * SEED_DEPTH_SPEED * ((choice % 1000) / 1000.0);
 }
 
 /*
@@ -130,4 +143,14 @@ int initBoid(SDL_Renderer* rend, Boid* boid)
     boid->rect.y = boid->position.y;
 
     return ret;
+}
+
+/*
+    Update loop for indivual Boid
+ */
+void updateBoid(Boid* boid, Boid* flock)
+{
+    boid->position = add(boid->position, boid->velocity);
+    boid->rect.x = boid->position.x;
+    boid->rect.y = boid->position.y;
 }
