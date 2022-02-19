@@ -1,6 +1,4 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
+#include "boids.h"
 
 int main(int argc, char *argv[])
 {
@@ -21,44 +19,19 @@ int main(int argc, char *argv[])
     // creates a renderer to render our images
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
 
-    // creates a surface
-    SDL_Surface* surface;
-    surface = SDL_CreateRGBSurfaceWithFormat(0, 100, 100, 32, SDL_PIXELFORMAT_RGBA32);
-    SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 0, 0, 255));
-
-
-    SDL_Surface* surface2;
-    surface2 = SDL_CreateRGBSurfaceWithFormat(0, 100, 100, 32, SDL_PIXELFORMAT_RGBA32);
-    SDL_FillRect(surface2, NULL, SDL_MapRGBA(surface2->format, 255, 0, 0, 255));
-
-    // loads image to our graphics hardware memory.
-    SDL_Texture* tex = SDL_CreateTextureFromSurface(rend, surface);
-    SDL_Texture* tex2 = SDL_CreateTextureFromSurface(rend, surface2);
-
-    // clears main-memory
-    SDL_FreeSurface(surface);
-    SDL_FreeSurface(surface2);
-
-    // let us control our image position
-    // so that we can move it with our keyboard.
-    SDL_Rect dest;
-    SDL_Rect dest2;
-
-    // connects our texture with dest to control position
-    SDL_QueryTexture(tex, NULL, NULL, &dest.w, &dest.h);
-    SDL_QueryTexture(tex, NULL, NULL, &dest2.w, &dest2.h);
+    // creates a Boid
+    Boid boid;
+    initBoid(rend, &boid);
 
     // adjust height and width of our image box.
-    dest.w /= 6;
-    dest.h /= 6;
-    dest2.w /= 6;
-    dest2.h /= 6;
+    boid.rect.w /= 6;
+    boid.rect.h /= 6;
 
     // sets initial x-position of object
-    dest.x = (1000 - dest.w) / 2;
+    boid.rect.x = (1000 - boid.rect.w) / 2;
 
     // sets initial y-position of object
-    dest.y = (1000 - dest.h) / 2;
+    boid.rect.y = (1000 - boid.rect.h) / 2;
 
     // controls animation loop
     int close = 0;
@@ -87,19 +60,19 @@ int main(int argc, char *argv[])
                     break;
                 case SDL_SCANCODE_W:
                 case SDL_SCANCODE_UP:
-                    dest.y -= speed / 30;
+                    boid.rect.y -= speed / 30;
                     break;
                 case SDL_SCANCODE_A:
                 case SDL_SCANCODE_LEFT:
-                    dest.x -= speed / 30;
+                    boid.rect.x -= speed / 30;
                     break;
                 case SDL_SCANCODE_S:
                 case SDL_SCANCODE_DOWN:
-                    dest.y += speed / 30;
+                    boid.rect.y += speed / 30;
                     break;
                 case SDL_SCANCODE_D:
                 case SDL_SCANCODE_RIGHT:
-                    dest.x += speed / 30;
+                    boid.rect.x += speed / 30;
                     break;
                 default:
                     break;
@@ -108,25 +81,24 @@ int main(int argc, char *argv[])
         }
 
         // right boundary
-        if (dest.x + dest.w > 1000)
-            dest.x = 1000 - dest.w;
+        if (boid.rect.x + boid.rect.w > 1000)
+            boid.rect.x = 1000 - boid.rect.w;
 
         // left boundary
-        if (dest.x < 0)
-            dest.x = 0;
+        if (boid.rect.x < 0)
+            boid.rect.x = 0;
 
         // bottom boundary
-        if (dest.y + dest.h > 1000)
-            dest.y = 1000 - dest.h;
+        if (boid.rect.y + boid.rect.h > 1000)
+            boid.rect.y = 1000 - boid.rect.h;
 
         // upper boundary
-        if (dest.y < 0)
-            dest.y = 0;
+        if (boid.rect.y < 0)
+            boid.rect.y = 0;
 
         // clears the screen
         SDL_RenderClear(rend);
-        SDL_RenderCopy(rend, tex, NULL, &dest);
-        SDL_RenderCopy(rend, tex2, NULL, &dest2);
+        SDL_RenderCopy(rend, boid.tex, NULL, &boid.rect);
 
         // triggers the double buffers
         // for multiple rendering
@@ -137,7 +109,7 @@ int main(int argc, char *argv[])
     }
 
     // destroy texture
-    SDL_DestroyTexture(tex);
+    SDL_DestroyTexture(boid.tex);
 
     // destroy renderer
     SDL_DestroyRenderer(rend);
@@ -149,4 +121,29 @@ int main(int argc, char *argv[])
     SDL_Quit();
 
     return 0;
+}
+
+int initBoid(SDL_Renderer* rend, Boid* boid)
+{
+    int ret;
+
+    // create the surface
+    boid->surface = SDL_CreateRGBSurfaceWithFormat(0, 100, 100, 32, SDL_PIXELFORMAT_RGBA32);
+    ret = SDL_FillRect(boid->surface, NULL, SDL_MapRGBA(boid->surface->format, 255, 0, 0, 255));
+
+    if (ret)
+    {
+        return ret;
+    }
+
+    // loads image to our graphics hardware memory.
+    boid->tex = SDL_CreateTextureFromSurface(rend, boid->surface);
+
+    // clears main-memory
+    SDL_FreeSurface(boid->surface);
+
+    // connects our texture with rect to control position
+    ret = SDL_QueryTexture(boid->tex, NULL, NULL, &(boid->rect.w), &(boid->rect.h));
+
+    return ret;
 }
