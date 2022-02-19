@@ -8,11 +8,14 @@
 #define SCREEN_DEPTH 255 // needs to be 255 for alpha
 
 // Tunable parameters
-#define N_BOIDS 50
-#define BOID_SIZE 5
-#define MIN_SPEED 10
-#define MAX_SPEED 15
-#define SEED_DEPTH_SPEED 5
+#define N_BOIDS 50 // number of boids to simulate
+#define BOID_SIZE 5 // how big are the boids?
+#define MIN_SPEED 10 // min speed of a boid
+#define MAX_SPEED 15 // max speed of a boid
+#define SEED_DEPTH_SPEED 5 // random seed for depth boid speed
+#define MARGIN 100 // margins at which to start turning
+#define FRONT_MARGIN 50 // margin at the front of screen
+#define TURN_FACTOR 2 // how quickly do boids avoid edges?
 
 struct image
 {
@@ -28,4 +31,5 @@ typedef struct image Boid;
 void placeBoid(Boid* boid);
 int initBoid(SDL_Renderer* rend, Boid* boid);
 void constrainSpeed(Boid* boid);
+void avoidEdges(Boid* boid);
 void updateBoid(Boid* boid, Boid* flock);

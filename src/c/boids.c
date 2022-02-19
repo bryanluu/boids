@@ -146,6 +146,25 @@ int initBoid(SDL_Renderer* rend, Boid* boid)
 }
 
 /*
+    Make Boid avoid screen edges
+ */
+void avoidEdges(Boid* boid)
+{
+    if (boid->position.x < MARGIN)
+        boid->velocity.x += TURN_FACTOR;
+    if (boid->position.x > SCREEN_WIDTH - MARGIN)
+        boid->velocity.x -= TURN_FACTOR;
+    if (boid->position.y < MARGIN)
+        boid->velocity.y += TURN_FACTOR;
+    if (boid->position.y > SCREEN_HEIGHT - MARGIN)
+        boid->velocity.y -= TURN_FACTOR;
+    if (boid->position.z < MARGIN)
+        boid->velocity.z += TURN_FACTOR;
+    if (boid->position.z > SCREEN_HEIGHT - FRONT_MARGIN)
+        boid->velocity.z -= TURN_FACTOR;
+}
+
+/*
     Ensure Boid speed remains within range
  */
 void constrainSpeed(Boid* boid)
@@ -162,6 +181,7 @@ void constrainSpeed(Boid* boid)
  */
 void updateBoid(Boid* boid, Boid* flock)
 {
+    avoidEdges(boid);
     constrainSpeed(boid);
     boid->position = add(boid->position, boid->velocity);
     boid->rect.x = boid->position.x;
