@@ -26,22 +26,33 @@ int main(int argc, char *argv[])
     surface = SDL_CreateRGBSurfaceWithFormat(0, 100, 100, 32, SDL_PIXELFORMAT_RGBA32);
     SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 0, 0, 255));
 
+
+    SDL_Surface* surface2;
+    surface2 = SDL_CreateRGBSurfaceWithFormat(0, 100, 100, 32, SDL_PIXELFORMAT_RGBA32);
+    SDL_FillRect(surface2, NULL, SDL_MapRGBA(surface2->format, 255, 0, 0, 255));
+
     // loads image to our graphics hardware memory.
     SDL_Texture* tex = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_Texture* tex2 = SDL_CreateTextureFromSurface(rend, surface2);
 
     // clears main-memory
     SDL_FreeSurface(surface);
+    SDL_FreeSurface(surface2);
 
     // let us control our image position
     // so that we can move it with our keyboard.
     SDL_Rect dest;
+    SDL_Rect dest2;
 
     // connects our texture with dest to control position
     SDL_QueryTexture(tex, NULL, NULL, &dest.w, &dest.h);
+    SDL_QueryTexture(tex, NULL, NULL, &dest2.w, &dest2.h);
 
     // adjust height and width of our image box.
     dest.w /= 6;
     dest.h /= 6;
+    dest2.w /= 6;
+    dest2.h /= 6;
 
     // sets initial x-position of object
     dest.x = (1000 - dest.w) / 2;
@@ -115,6 +126,7 @@ int main(int argc, char *argv[])
         // clears the screen
         SDL_RenderClear(rend);
         SDL_RenderCopy(rend, tex, NULL, &dest);
+        SDL_RenderCopy(rend, tex2, NULL, &dest2);
 
         // triggers the double buffers
         // for multiple rendering
