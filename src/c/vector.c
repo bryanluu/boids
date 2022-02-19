@@ -22,9 +22,9 @@ Vector3D sub(Vector3D u, Vector3D v)
 }
 
 // calculate dot product of vectors
-unsigned int dot(Vector3D u, Vector3D v)
+double dot(Vector3D u, Vector3D v)
 {
-  unsigned int result = (unsigned int) (u.x * v.x + u.y * v.y + u.z * v.z);
+  double result = (u.x * v.x + u.y * v.y + u.z * v.z);
   return result;
 }
 
