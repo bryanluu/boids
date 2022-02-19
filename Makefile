@@ -1,41 +1,39 @@
 # A simple Makefile for compiling small SDL projects
 
+S_DIR=src/c
+B_DIR=bin
+
 # set the compiler
 CC := clang
 
 # set the compiler flags
 CFLAGS := `sdl2-config --libs --cflags` -ggdb3 -O0 --std=c99 -Wall -lSDL2_image -lm
+
 # add header files here
-HDRS := 
+HDRS := $(S_DIR)/boids.h $(S_DIR)/vector.h
 
 # add source files here
-SRCS := boids.c #file-name.c
+SRCS := $(S_DIR)/boids.c $(S_DIR)/vector.c #file-name.c
 
 # generate names of object files
-OBJS := $(SRCS:.c=.o)
+OBJS := $(SRCS:$(S_DIR)/%.c=$(B_DIR)/%.o)
 
 # name of executable
 EXEC := boids #name your executable file
 
 # default recipe
 all: $(EXEC)
- 
-showfont: showfont.c Makefile
-	$(CC) -o $@ $@.c $(CFLAGS) $(LIBS)
-
-glfont: glfont.c Makefile
-	$(CC) -o $@ $@.c $(CFLAGS) $(LIBS)
 
 # recipe for building the final executable
 $(EXEC): $(OBJS) $(HDRS) Makefile
-	$(CC) -o bin/$@ bin/$(OBJS) $(CFLAGS)
+	$(CC) -o $(B_DIR)/$@ $(OBJS) $(CFLAGS)
 
 # recipe for building object files
-$(OBJS): $(@:.o=.c) $(HDRS) Makefile
-	$(CC) -o bin/$@ src/c/$(@:.o=.c) -c $(CFLAGS)
+$(OBJS): $(@:%.c) $(HDRS) Makefile
+	$(CC) -o $@ $(@:$(B_DIR)/%.o=$(S_DIR)/%.c) -c $(CFLAGS)
 
 # recipe to clean the workspace
 clean:
-	rm -f bin/$(EXEC) bin/$(OBJS)
+	rm -f $(B_DIR)/$(EXEC) $(OBJS)
 
 .PHONY: all clean
