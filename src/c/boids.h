@@ -14,8 +14,11 @@ struct image
   SDL_Surface* surface;
   SDL_Texture* tex;
   SDL_Rect rect;
+  Vector3D position;
+  Vector3D velocity;
 };
 
 typedef struct image Boid;
 
+void placeBoid(Boid* boid);
 int initBoid(SDL_Renderer* rend, Boid* boid);

@@ -87,18 +87,29 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/*
+    Place the given Boid somewhere randomly along the screen
+ */
+void placeBoid(Boid* boid)
+{
+    boid->position.x = rand() % SCREEN_WIDTH;
+    boid->position.y = rand() % SCREEN_HEIGHT;
+    boid->position.z = rand() % SCREEN_DEPTH;
+}
+
+/*
+    Initialize Boid parameters
+ */
 int initBoid(SDL_Renderer* rend, Boid* boid)
 {
     int ret;
-    int x, y, z;
 
-    x = rand() % SCREEN_WIDTH;
-    y = rand() % SCREEN_HEIGHT;
-    z = rand() % SCREEN_DEPTH;
+    // place boid somewhere
+    placeBoid(boid);
 
     // create the surface
     boid->surface = SDL_CreateRGBSurfaceWithFormat(0, BOID_SIZE, BOID_SIZE, 32, SDL_PIXELFORMAT_RGBA32);
-    ret = SDL_FillRect(boid->surface, NULL, SDL_MapRGBA(boid->surface->format, 255, 255, 255, z));
+    ret = SDL_FillRect(boid->surface, NULL, SDL_MapRGBA(boid->surface->format, 255, 255, 255, boid->position.z));
 
     if (ret)
     {
@@ -115,8 +126,8 @@ int initBoid(SDL_Renderer* rend, Boid* boid)
     ret = SDL_QueryTexture(boid->tex, NULL, NULL, &(boid->rect.w), &(boid->rect.h));
 
     // position Boid
-    boid->rect.x = x;
-    boid->rect.y = y;
+    boid->rect.x = boid->position.x;
+    boid->rect.y = boid->position.y;
 
     return ret;
 }
