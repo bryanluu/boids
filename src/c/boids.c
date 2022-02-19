@@ -103,9 +103,9 @@ void placeBoid(Boid* boid)
     boid->position.z = rand() % SCREEN_DEPTH;
     int choice;
     choice = rand();
-    boid->velocity.x = ((choice % 2) ? 1 : -1) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * ((choice % 1000) / 1000.0));
+    boid->velocity.x = ((choice % 2) ? 1 : -1) * (0.5 * MIN_SPEED + (MAX_SPEED - MIN_SPEED) * ((choice % 1000) / 1000.0));
     choice = rand();
-    boid->velocity.y = ((choice % 2) ? 1 : -1) * (MIN_SPEED + (MAX_SPEED - MIN_SPEED) * ((choice % 1000) / 1000.0));
+    boid->velocity.y = ((choice % 2) ? 1 : -1) * (0.5 * MIN_SPEED + (MAX_SPEED - MIN_SPEED) * ((choice % 1000) / 1000.0));
     choice = rand();
     boid->velocity.z = ((choice % 2) ? 1 : -1) * SEED_DEPTH_SPEED * ((choice % 1000) / 1000.0);
 }
@@ -146,10 +146,23 @@ int initBoid(SDL_Renderer* rend, Boid* boid)
 }
 
 /*
+    Ensure Boid speed remains within range
+ */
+void constrainSpeed(Boid* boid)
+{
+    double speed = length(boid->velocity);
+    if (speed > MAX_SPEED)
+        boid->velocity = multiply(boid->velocity, MIN_SPEED / speed);
+    if (speed < MIN_SPEED)
+        boid->velocity = multiply(boid->velocity, MIN_SPEED / speed);
+}
+
+/*
     Update loop for indivual Boid
  */
 void updateBoid(Boid* boid, Boid* flock)
 {
+    constrainSpeed(boid);
     boid->position = add(boid->position, boid->velocity);
     boid->rect.x = boid->position.x;
     boid->rect.y = boid->position.y;

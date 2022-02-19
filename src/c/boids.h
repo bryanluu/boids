@@ -27,4 +27,5 @@ typedef struct image Boid;
 
 void placeBoid(Boid* boid);
 int initBoid(SDL_Renderer* rend, Boid* boid);
+void constrainSpeed(Boid* boid);
 void updateBoid(Boid* boid, Boid* flock);

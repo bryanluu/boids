@@ -33,3 +33,13 @@ double length(Vector3D u)
 {
    return sqrt(dot(u, u));
 }
+
+// multiply by scalar
+Vector3D multiply(Vector3D u, double s)
+{
+  Vector3D result;
+  result.x = u.x * s;
+  result.y = u.y * s;
+  result.z = u.z * s;
+  return result;
+}

@@ -9,5 +9,6 @@ typedef struct vector Vector3D;
 
 Vector3D add(Vector3D u, Vector3D v);
 Vector3D sub(Vector3D u, Vector3D v);
+Vector3D multiply(Vector3D u, double s);
 double dot(Vector3D u, Vector3D v);
 double length(Vector3D u);
