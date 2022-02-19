@@ -19,15 +19,15 @@ int main(int argc, char *argv[])
     // creates a renderer to render our images
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
 
-    // creates a Boid
-    Boid boid;
-    initBoid(rend, &boid);
+    // creates flock
+    Boid flock[N_BOIDS];
+    for (int i = 0; i < N_BOIDS; i++)
+    {
+        initBoid(rend, &flock[i]);
+    }
 
     // controls animation loop
     int close = 0;
-
-    // speed of box
-    int speed = 300;
 
     // animation loop
     while (!close) {
@@ -48,47 +48,18 @@ int main(int argc, char *argv[])
                 case SDL_SCANCODE_ESCAPE:
                     close = 1;
                     break;
-                case SDL_SCANCODE_W:
-                case SDL_SCANCODE_UP:
-                    boid.rect.y -= speed / 30;
-                    break;
-                case SDL_SCANCODE_A:
-                case SDL_SCANCODE_LEFT:
-                    boid.rect.x -= speed / 30;
-                    break;
-                case SDL_SCANCODE_S:
-                case SDL_SCANCODE_DOWN:
-                    boid.rect.y += speed / 30;
-                    break;
-                case SDL_SCANCODE_D:
-                case SDL_SCANCODE_RIGHT:
-                    boid.rect.x += speed / 30;
-                    break;
                 default:
                     break;
                 }
             }
         }
 
-        // right boundary
-        if (boid.rect.x + boid.rect.w > 1000)
-            boid.rect.x = 1000 - boid.rect.w;
-
-        // left boundary
-        if (boid.rect.x < 0)
-            boid.rect.x = 0;
-
-        // bottom boundary
-        if (boid.rect.y + boid.rect.h > 1000)
-            boid.rect.y = 1000 - boid.rect.h;
-
-        // upper boundary
-        if (boid.rect.y < 0)
-            boid.rect.y = 0;
-
         // clears the screen
         SDL_RenderClear(rend);
-        SDL_RenderCopy(rend, boid.tex, NULL, &boid.rect);
+        for (int i = 0; i < N_BOIDS; i++)
+        {
+            SDL_RenderCopy(rend, flock[i].tex, NULL, &flock[i].rect);
+        }
 
         // triggers the double buffers
         // for multiple rendering
@@ -99,7 +70,10 @@ int main(int argc, char *argv[])
     }
 
     // destroy texture
-    SDL_DestroyTexture(boid.tex);
+    for (int i = 0; i < N_BOIDS; i++)
+    {
+        SDL_DestroyTexture(flock[i].tex);
+    }
 
     // destroy renderer
     SDL_DestroyRenderer(rend);
