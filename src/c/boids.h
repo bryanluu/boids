@@ -16,9 +16,9 @@
 #define MARGIN 100 // margins at which to start turning
 #define FRONT_MARGIN 50 // margin at the front of screen
 #define TURN_FACTOR 2 // how quickly do boids avoid edges?
-#define PROTECTED_RANGE 10 // the range at which boids avoid others
-#define AVOID_FACTOR 1 // how quickly do boids avoid each other? 
-#define VISIBLE_RANGE 50 // follow others within this range
+#define PROTECTED_RANGE 20 // the range at which boids avoid others
+#define AVOID_FACTOR 0.1 // how quickly do boids avoid each other? 
+#define VISIBLE_RANGE 100 // follow others within this range
 #define MATCHING_FACTOR 0.2 // how quickly boids should follow flock?
 #define CENTERING_FACTOR 0.005 // how closely do boids follow flock?
 
