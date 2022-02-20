@@ -170,11 +170,17 @@ void avoidEdges(Boid* boid)
  */
 void constrainSpeed(Boid* boid)
 {
-    double speed = length(boid->velocity);
+    double speed = sqrt(boid->velocity.x * boid->velocity.x + boid->velocity.y * boid->velocity.y);
     if (speed > MAX_SPEED)
-        boid->velocity = multiply(boid->velocity, MIN_SPEED / speed);
+    {
+        boid->velocity.x = (boid->velocity.x * MAX_SPEED) / speed; 
+        boid->velocity.y = (boid->velocity.y * MAX_SPEED) / speed; 
+    }
     if (speed < MIN_SPEED)
-        boid->velocity = multiply(boid->velocity, MIN_SPEED / speed);
+    {
+        boid->velocity.x = (boid->velocity.x * MIN_SPEED) / speed; 
+        boid->velocity.y = (boid->velocity.y * MIN_SPEED) / speed; 
+    }
 }
 
 /*
@@ -190,8 +196,8 @@ void constrainPosition(Boid* boid)
         boid->position.y = 0;
     if (boid->position.y > SCREEN_HEIGHT)
         boid->position.y = SCREEN_HEIGHT;
-    if (boid->position.z < 0)
-        boid->position.z = 0;
+    if (boid->position.z < MARGIN)
+        boid->position.z = MARGIN;
     if (boid->position.z > SCREEN_DEPTH)
         boid->position.z = SCREEN_DEPTH;
 }
@@ -249,6 +255,15 @@ void flyWithFlock(Boid* boid, Boid* flock)
 }
 
 /*
+    Flutter depth-wise for nice effect
+ */
+void flutterDepth(Boid* boid)
+{
+    int choice = rand();
+    boid->velocity.z += (choice % 2 ? 1 : -1) * FLUTTER_SPEED * (choice % DEPTH_FLUTTER);
+}
+
+/*
     Update loop for indivual Boid
  */
 void updateBoid(Boid* boid, Boid* flock)
@@ -256,6 +271,7 @@ void updateBoid(Boid* boid, Boid* flock)
     flyWithFlock(boid, flock);
     avoidEdges(boid);
     constrainSpeed(boid);
+    flutterDepth(boid);
     boid->position = add(boid->position, boid->velocity);
     constrainPosition(boid);
     boid->rect.x = boid->position.x;
@@ -271,4 +287,4 @@ void drawBoid(SDL_Renderer* rend, Boid* boid)
     boid->tex = SDL_CreateTextureFromSurface(rend, boid->surface);
     // clears main-memory
     SDL_FreeSurface(boid->surface);
-} 
+}

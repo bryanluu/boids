@@ -8,19 +8,21 @@
 #define SCREEN_DEPTH 255 // needs to be 255 for alpha
 
 // Tunable parameters
-#define N_BOIDS 100 // number of boids to simulate
+#define N_BOIDS 200 // number of boids to simulate
 #define BOID_SIZE 5 // how big are the boids?
 #define MIN_SPEED 10 // min speed of a boid
 #define MAX_SPEED 15 // max speed of a boid
-#define SEED_DEPTH_SPEED 5 // random seed for depth boid speed
+#define SEED_DEPTH_SPEED 15 // random seed for depth boid speed
 #define MARGIN 100 // margins at which to start turning
 #define FRONT_MARGIN 50 // margin at the front of screen
 #define TURN_FACTOR 2 // how quickly do boids avoid edges?
 #define PROTECTED_RANGE 20 // the range at which boids avoid others
-#define AVOID_FACTOR 0.1 // how quickly do boids avoid each other? 
-#define VISIBLE_RANGE 100 // follow others within this range
-#define MATCHING_FACTOR 0.2 // how quickly boids should follow flock?
+#define AVOID_FACTOR 0.2 // how quickly do boids avoid each other? 
+#define VISIBLE_RANGE 150 // follow others within this range
+#define MATCHING_FACTOR 0.1 // how quickly boids should follow flock?
 #define CENTERING_FACTOR 0.005 // how closely do boids follow flock?
+#define DEPTH_FLUTTER 50 // how much do boids flutter between depths?
+#define FLUTTER_SPEED 0.5 // how quickly do boids flutter?
 
 struct boid
 {
@@ -45,5 +47,6 @@ void constrainPosition(Boid* boid);
 void followNeighbors(Boid* boid);
 void avoidOthers(Boid* boid);
 void flyWithFlock(Boid* boid, Boid* flock);
+void flutterDepth(Boid* boid);
 void updateBoid(Boid* boid, Boid* flock);
 void drawBoid(SDL_Renderer* rend, Boid* boid);
