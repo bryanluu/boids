@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < N_BOIDS; i++)
         {
             updateBoid(&flock[i], flock);
-            drawBoid(&flock[i]);
+            drawBoid(rend, &flock[i]);
         }
 
         // clears the screen
@@ -262,7 +262,13 @@ void updateBoid(Boid* boid, Boid* flock)
     boid->rect.y = boid->position.y;
 }
 
-void drawBoid(Boid* boid)
+void drawBoid(SDL_Renderer* rend, Boid* boid)
 {
-    SDL_SetTextureAlphaMod(boid->tex, boid->position.z);
+    // create the surface
+    boid->surface = SDL_CreateRGBSurfaceWithFormat(0, BOID_SIZE, BOID_SIZE, 32, SDL_PIXELFORMAT_RGBA32);
+    SDL_FillRect(boid->surface, NULL, SDL_MapRGBA(boid->surface->format, 255, 255, 255, boid->position.z));
+    SDL_DestroyTexture(boid->tex);
+    boid->tex = SDL_CreateTextureFromSurface(rend, boid->surface);
+    // clears main-memory
+    SDL_FreeSurface(boid->surface);
 } 
