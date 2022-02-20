@@ -196,23 +196,55 @@ void constrainPosition(Boid* boid)
 }
 
 /*
+    Follow neighboring boids
+ */
+void followNeighbors(Boid* boid)
+{
+    if (boid->neighbors > 0)
+    {
+        boid->avgPosition = multiply(boid->avgPosition, 1.0 / boid->neighbors);
+        boid->avgVelocity = multiply(boid->avgVelocity, 1.0 / boid->neighbors);
+        boid->velocity = add(boid->velocity, multiply(sub(boid->avgVelocity, boid->velocity), MATCHING_FACTOR));
+        boid->velocity = add(boid->velocity, multiply(sub(boid->avgPosition, boid->position), CENTERING_FACTOR));
+    }
+}
+
+/*
     Avoid other boids
  */
-void avoidOthers(Boid* boid, Boid* flock)
+void avoidOthers(Boid* boid)
+{
+    boid->velocity = add(boid->velocity, multiply(boid->closeness, AVOID_FACTOR));
+}
+
+/*
+    Fly with the flock
+ */
+void flyWithFlock(Boid* boid, Boid* flock)
 {
     zero(&boid->closeness);
+    zero(&boid->avgPosition);
+    zero(&boid->avgVelocity);
+    boid->neighbors = 0;
     for (int i = 0; i < N_BOIDS; i++)
     {
         Boid* other = (flock + i);
-        if (boid != other)
+        if (boid == other)
+            continue;
+
+        Vector3D diff = sub(boid->position, other->position);
+        double dist = length(diff);
+        if (dist < PROTECTED_RANGE)
+            boid->closeness = add(boid->closeness, diff);
+        if (dist < VISIBLE_RANGE)
         {
-            Vector3D diff = sub(boid->position, other->position);
-            double dist = length(diff);
-            if (dist < PROTECTED_RANGE)
-                boid->closeness = add(boid->closeness, diff);
+            boid->avgPosition = add(boid->avgPosition, other->position);
+            boid->avgVelocity = add(boid->avgVelocity, other->velocity);
+            boid->neighbors++;
         }
     }
-    boid->velocity = add(boid->velocity, multiply(boid->closeness, AVOID_FACTOR));
+    avoidOthers(boid);
+    followNeighbors(boid);
 }
 
 /*
@@ -220,7 +252,7 @@ void avoidOthers(Boid* boid, Boid* flock)
  */
 void updateBoid(Boid* boid, Boid* flock)
 {
-    avoidOthers(boid, flock);
+    flyWithFlock(boid, flock);
     avoidEdges(boid);
     constrainSpeed(boid);
     boid->position = add(boid->position, boid->velocity);

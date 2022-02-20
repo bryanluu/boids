@@ -16,8 +16,11 @@
 #define MARGIN 100 // margins at which to start turning
 #define FRONT_MARGIN 50 // margin at the front of screen
 #define TURN_FACTOR 2 // how quickly do boids avoid edges?
-#define PROTECTED_RANGE 50 // the range at which boids avoid others
+#define PROTECTED_RANGE 10 // the range at which boids avoid others
 #define AVOID_FACTOR 1 // how quickly do boids avoid each other? 
+#define VISIBLE_RANGE 50 // follow others within this range
+#define MATCHING_FACTOR 0.2 // how quickly boids should follow flock?
+#define CENTERING_FACTOR 0.005 // how closely do boids follow flock?
 
 struct boid
 {
@@ -27,6 +30,9 @@ struct boid
   Vector3D position;
   Vector3D velocity;
   Vector3D closeness;
+  Vector3D avgPosition;
+  Vector3D avgVelocity;
+  unsigned int neighbors;
 };
 
 typedef struct boid Boid;
@@ -36,5 +42,7 @@ int initBoid(SDL_Renderer* rend, Boid* boid);
 void constrainSpeed(Boid* boid);
 void avoidEdges(Boid* boid);
 void constrainPosition(Boid* boid);
-void avoidOthers(Boid* boid, Boid* flock);
+void followNeighbors(Boid* boid);
+void avoidOthers(Boid* boid);
+void flyWithFlock(Boid* boid, Boid* flock);
 void updateBoid(Boid* boid, Boid* flock);
