@@ -46,3 +46,4 @@ void followNeighbors(Boid* boid);
 void avoidOthers(Boid* boid);
 void flyWithFlock(Boid* boid, Boid* flock);
 void updateBoid(Boid* boid, Boid* flock);
+void drawBoid(Boid* boid);

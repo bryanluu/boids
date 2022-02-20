@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < N_BOIDS; i++)
         {
             updateBoid(&flock[i], flock);
+            drawBoid(&flock[i]);
         }
 
         // clears the screen
@@ -260,3 +261,8 @@ void updateBoid(Boid* boid, Boid* flock)
     boid->rect.x = boid->position.x;
     boid->rect.y = boid->position.y;
 }
+
+void drawBoid(Boid* boid)
+{
+    SDL_SetTextureAlphaMod(boid->tex, boid->position.z);
+} 
