@@ -8,7 +8,7 @@
 #define SCREEN_DEPTH 255 // needs to be 255 for alpha
 
 // Tunable parameters
-#define N_BOIDS 200 // number of boids to simulate
+#define N_BOIDS 500 // number of boids to simulate
 #define BOID_SIZE 5 // how big are the boids?
 #define MIN_SPEED 10 // min speed of a boid
 #define MAX_SPEED 15 // max speed of a boid
