@@ -3,7 +3,7 @@ This project simulates a flock of 'boids', or digital birds (or fish). Inspired 
 
 ## Dependencies
 - `clang` compiler: https://clang.llvm.org/get_started.html
-- Make: http://www.gnu.org/software/make/
+- `make`: http://www.gnu.org/software/make/
 - Install SDL2: https://wiki.libsdl.org/Installation
   - Install dev version: `sudo apt-get install libsdl2-dev`
 
