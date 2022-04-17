@@ -28,8 +28,8 @@
 RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, true);
 
 // Boid parameters
-#define SCREEN_WIDTH 32
-#define SCREEN_HEIGHT 32
+#define SCREEN_WIDTH 31
+#define SCREEN_HEIGHT 31
 
 // Tunable parameters
 #define N_BOIDS 15 // number of boids to simulate
@@ -220,14 +220,8 @@ void constrainSpeed(Boid* boid)
  */
 void constrainPosition(Boid* boid)
 {
-    if (boid->position.x < 0)
-        boid->position.x = 0;
-    if (boid->position.x > SCREEN_WIDTH)
-        boid->position.x = SCREEN_WIDTH;
-    if (boid->position.y < 0)
-        boid->position.y = 0;
-    if (boid->position.y > SCREEN_HEIGHT)
-        boid->position.y = SCREEN_HEIGHT;
+    boid->position.x = BOUND(0, boid->position.x, SCREEN_WIDTH);
+    boid->position.y = BOUND(0, boid->position.y, SCREEN_HEIGHT);
 }
 
 /*
@@ -296,5 +290,7 @@ void updateBoid(Boid* boid, Boid* flock)
 
 void drawBoid(Boid* boid)
 {
-    matrix.drawPixel(boid->position.x, boid->position.y, matrix.Color333(7, 7, 7));
+    byte x = BOUND(0, boid->position.x, SCREEN_WIDTH);
+    byte y = BOUND(0, boid->position.y, SCREEN_HEIGHT);
+    matrix.drawPixel(x, y, matrix.Color333(7, 7, 7));
 }
