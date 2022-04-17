@@ -43,6 +43,12 @@ RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, true);
 #define VISIBLE_RANGE 5 // follow others within this range
 #define MATCHING_FACTOR 0.06 // how quickly boids should follow flock?
 #define CENTERING_FACTOR 0.005 // how closely do boids follow flock?
+#define LONELY_LIMIT 2 // below how many separated boids is considered 'lonely'?
+
+#define DEFAULT_COLOR (matrix.Color333(4, 4, 7)) // color of a boid by default
+#define DANGER_COLOR (matrix.Color333(7, 2, 2)) // color of a boid in danger
+#define LONELY_COLOR (matrix.Color333(7, 7, 1)) // color of a boid that is lonely
+#define SLOW_COLOR (matrix.Color333(1, 1, 7)) // color of a slow boid
 
 #define BOUND(l, x, h) ((x) > (h) ? (h) : ((x) < (l) ? (l) : (x))) // return x bounded between l and h
 
@@ -292,5 +298,22 @@ void drawBoid(Boid* boid)
 {
     byte x = BOUND(0, boid->position.x, SCREEN_WIDTH);
     byte y = BOUND(0, boid->position.y, SCREEN_HEIGHT);
-    matrix.drawPixel(x, y, matrix.Color333(7, 7, 7));
+    uint16_t color = DEFAULT_COLOR;
+
+    if ((x == 0) || (x == SCREEN_WIDTH) || (y == 0) || (y == SCREEN_HEIGHT)) // boid is too close to the wall
+    {
+      color = DANGER_COLOR;
+    }
+    else if (boid->neighbors < LONELY_LIMIT) // boid is not part of a flock
+    {
+      color = LONELY_COLOR;
+    }
+    else
+    {
+      double frac_speed_limit = abs(MAX_SPEED - length(boid->velocity))/MAX_SPEED;
+      if (frac_speed_limit > 0.25) // boid is too slow
+        color = SLOW_COLOR;
+    }
+    
+    matrix.drawPixel(x, y, color);
 }
