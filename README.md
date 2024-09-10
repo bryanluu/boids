@@ -12,6 +12,8 @@ The project was implemented in C for SDL, then translated to work with an Arduin
 - `make`: http://www.gnu.org/software/make/
 - Install SDL2: https://wiki.libsdl.org/Installation
   - Install dev version: `sudo apt-get install libsdl2-dev`
+- Install SDL_Image 2.0: https://github.com/libsdl-org/SDL_image/tree/SDL2
+  - Instructions: https://www.libsdl.org/projects/old/SDL_image/docs/SDL_image.html
 
 ### Config
 Configuration parameters can be found in [`boid.h`](https://github.com/bryanluu/boids/blob/main/src/c/boids.h).
