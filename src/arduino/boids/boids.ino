@@ -6,6 +6,7 @@
 // BSD license, all text above must be included in any redistribution.
 
 #include "vector.h"
+#include "boids.h"
 #include <RGBmatrixPanel.h>
 
 // Most of the signal pins are configurable, but the CLK pin has some
@@ -26,55 +27,38 @@
 #define C   A2
 #define D   A3
 
-RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, true);
-
-// Boid parameters
-#define SCREEN_WIDTH 31
-#define SCREEN_HEIGHT 31
-
-// Tunable parameters
-#define N_BOIDS 15 // number of boids to simulate
-#define BOID_SIZE 1 // how big are the boids?
-#define MIN_SPEED 0.4 // min speed of a boid
-#define MAX_SPEED 1 // max speed of a boid
-#define MARGIN 4 // margins at which to start turning
-#define TURN_FACTOR 0.15 // how quickly do boids avoid edges?
-#define PROTECTED_RANGE 1.5 // the range at which boids avoid others
-#define AVOID_FACTOR 0.05 // how quickly do boids avoid each other? 
-#define VISIBLE_RANGE 5 // follow others within this range
-#define MATCHING_FACTOR 0.06 // how quickly boids should follow flock?
-#define CENTERING_FACTOR 0.005 // how closely do boids follow flock?
-#define LONELY_LIMIT 2 // below how many separated boids is considered 'lonely'?
-
+// Boid drawing
 #define DEFAULT_COLOR (matrix.Color333(4, 4, 7)) // color of a boid by default
 #define DANGER_COLOR (matrix.Color333(7, 2, 2)) // color of a boid in danger
 #define LONELY_COLOR (matrix.Color333(7, 7, 1)) // color of a boid that is lonely
 #define SLOW_COLOR (matrix.Color333(1, 1, 7)) // color of a slow boid
 
-#define BOUND(l, x, h) ((x) > (h) ? (h) : ((x) < (l) ? (l) : (x))) // return x bounded between l and h
 
-struct boid
+RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, true);
+
+void drawBoid(Boid* boid)
 {
-  RGBmatrixPanel* surface;
-  Vector position;
-  Vector velocity;
-  Vector closeness;
-  Vector avgPosition;
-  Vector avgVelocity;
-  unsigned int neighbors;
-};
+    byte x = BOUND(0, boid->position.x, SCREEN_WIDTH);
+    byte y = BOUND(0, boid->position.y, SCREEN_HEIGHT);
+    uint16_t color = DEFAULT_COLOR;
 
-typedef struct boid Boid;
-
-void placeBoid(Boid* boid);
-void constrainSpeed(Boid* boid);
-void avoidEdges(Boid* boid);
-void constrainPosition(Boid* boid);
-void followNeighbors(Boid* boid);
-void avoidOthers(Boid* boid);
-void flyWithFlock(Boid* boid, Boid* flock);
-void updateBoid(Boid* boid, Boid* flock);
-void drawBoid(Boid* boid);
+    if ((x == 0) || (x == SCREEN_WIDTH) || (y == 0) || (y == SCREEN_HEIGHT)) // boid is too close to the wall
+    {
+      color = DANGER_COLOR;
+    }
+    else if (boid->neighbors < LONELY_LIMIT) // boid is not part of a flock
+    {
+      color = LONELY_COLOR;
+    }
+    else
+    {
+      double frac_speed_limit = abs(MAX_SPEED - length(boid->velocity))/MAX_SPEED;
+      if (frac_speed_limit > 0.25) // boid is too slow
+        color = SLOW_COLOR;
+    }
+    
+    matrix.drawPixel(x, y, color);
+}
 
 // creates flock
 Boid flock[N_BOIDS];
@@ -110,148 +94,3 @@ void loop() {
   matrix.swapBuffers(false);
 }
 
-///////// BOID CODE /////////////
-
-/*
-    Place the given Boid somewhere randomly along the screen
- */
-void placeBoid(Boid* boid)
-{
-    boid->position.x = random(SCREEN_WIDTH);
-    boid->position.y = random(SCREEN_HEIGHT);
-    long choice;
-    choice = random(1000);
-    boid->velocity.x = ((choice % 2) ? 1 : -1) * (0.5 * MIN_SPEED + (MAX_SPEED - MIN_SPEED) * (choice / 1000.0));
-    choice = random();
-    boid->velocity.y = ((choice % 2) ? 1 : -1) * (0.5 * MIN_SPEED + (MAX_SPEED - MIN_SPEED) * (choice / 1000.0));
-}
-
-/*
-    Make Boid avoid screen edges
- */
-void avoidEdges(Boid* boid)
-{
-    if (boid->position.x < MARGIN)
-        boid->velocity.x += TURN_FACTOR;
-    if (boid->position.x > SCREEN_WIDTH - MARGIN)
-        boid->velocity.x -= TURN_FACTOR;
-    if (boid->position.y < MARGIN)
-        boid->velocity.y += TURN_FACTOR;
-    if (boid->position.y > SCREEN_HEIGHT - MARGIN)
-        boid->velocity.y -= TURN_FACTOR;
-}
-
-/*
-    Ensure Boid speed remains within range
- */
-void constrainSpeed(Boid* boid)
-{
-    double speed = sqrt(boid->velocity.x * boid->velocity.x + boid->velocity.y * boid->velocity.y);
-    if (speed > MAX_SPEED)
-    {
-        boid->velocity.x = (boid->velocity.x * MAX_SPEED) / speed; 
-        boid->velocity.y = (boid->velocity.y * MAX_SPEED) / speed; 
-    }
-    if (speed < MIN_SPEED)
-    {
-        boid->velocity.x = (boid->velocity.x * MIN_SPEED) / speed; 
-        boid->velocity.y = (boid->velocity.y * MIN_SPEED) / speed; 
-    }
-}
-
-/*
-    Constrain Boid to always stay within screen
- */
-void constrainPosition(Boid* boid)
-{
-    boid->position.x = BOUND(0, boid->position.x, SCREEN_WIDTH);
-    boid->position.y = BOUND(0, boid->position.y, SCREEN_HEIGHT);
-}
-
-/*
-    Follow neighboring boids
- */
-void followNeighbors(Boid* boid)
-{
-    if (boid->neighbors > 0)
-    {
-        boid->avgPosition = multiply(boid->avgPosition, 1.0 / boid->neighbors);
-        boid->avgVelocity = multiply(boid->avgVelocity, 1.0 / boid->neighbors);
-        boid->velocity = add(boid->velocity, multiply(sub(boid->avgVelocity, boid->velocity), MATCHING_FACTOR));
-        boid->velocity = add(boid->velocity, multiply(sub(boid->avgPosition, boid->position), CENTERING_FACTOR));
-    }
-}
-
-/*
-    Avoid other boids
- */
-void avoidOthers(Boid* boid)
-{
-    boid->velocity = add(boid->velocity, multiply(boid->closeness, AVOID_FACTOR));
-}
-
-/*
-    Fly with the flock
- */
-void flyWithFlock(Boid* boid, Boid* flock)
-{
-    zero(&boid->closeness);
-    zero(&boid->avgPosition);
-    zero(&boid->avgVelocity);
-    boid->neighbors = 0;
-    for (int i = 0; i < N_BOIDS; i++)
-    {
-        Boid* other = (flock + i);
-        if (boid == other)
-            continue;
-
-        Vector diff = sub(boid->position, other->position);
-        double dist = length(diff);
-        if (dist < PROTECTED_RANGE)
-            boid->closeness = add(boid->closeness, diff);
-        if (dist < VISIBLE_RANGE)
-        {
-            boid->avgPosition = add(boid->avgPosition, other->position);
-            boid->avgVelocity = add(boid->avgVelocity, other->velocity);
-            boid->neighbors++;
-        }
-    }
-    avoidOthers(boid);
-    followNeighbors(boid);
-}
-
-/*
-    Update loop for indivual Boid
- */
-void updateBoid(Boid* boid, Boid* flock)
-{
-    flyWithFlock(boid, flock);
-    avoidEdges(boid);
-    constrainSpeed(boid);
-    boid->position = add(boid->position, boid->velocity);
-    constrainPosition(boid);
-}
-
-void drawBoid(Boid* boid)
-{
-    byte x = BOUND(0, boid->position.x, SCREEN_WIDTH);
-    byte y = BOUND(0, boid->position.y, SCREEN_HEIGHT);
-    uint16_t color = DEFAULT_COLOR;
-
-    if ((x == 0) || (x == SCREEN_WIDTH) || (y == 0) || (y == SCREEN_HEIGHT)) // boid is too close to the wall
-    {
-      color = DANGER_COLOR;
-    }
-    else if (boid->neighbors < LONELY_LIMIT) // boid is not part of a flock
-    {
-      color = LONELY_COLOR;
-    }
-    else
-    {
-      double frac_speed_limit = abs(MAX_SPEED - length(boid->velocity))/MAX_SPEED;
-      if (frac_speed_limit > 0.25) // boid is too slow
-        color = SLOW_COLOR;
-    }
-    
-    matrix.drawPixel(x, y, color);
-}
