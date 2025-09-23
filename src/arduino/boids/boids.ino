@@ -5,6 +5,7 @@
 // Written by Bryan Luu.
 // BSD license, all text above must be included in any redistribution.
 
+#include "vector.h"
 #include <RGBmatrixPanel.h>
 
 // Most of the signal pins are configurable, but the CLK pin has some
@@ -51,20 +52,6 @@ RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, true);
 #define SLOW_COLOR (matrix.Color333(1, 1, 7)) // color of a slow boid
 
 #define BOUND(l, x, h) ((x) > (h) ? (h) : ((x) < (l) ? (l) : (x))) // return x bounded between l and h
-
-struct vector
-{
-  double x, y;
-};
-
-typedef struct vector Vector;
-
-Vector add(Vector u, Vector v);
-Vector sub(Vector u, Vector v);
-Vector multiply(Vector u, double s);
-double dot(Vector u, Vector v);
-double length(Vector u);
-void zero(Vector* u);
 
 struct boid
 {
@@ -121,55 +108,6 @@ void loop() {
 
   // Update display
   matrix.swapBuffers(false);
-}
-
-/////////// VECTOR CODE ////////
-
-// add Vectors u & v together
-Vector add(Vector u, Vector v)
-{
-  Vector result;
-  result.x = u.x + v.x;
-  result.y = u.y + v.y;
-  return result;
-}
-
-// subtract v from u
-Vector sub(Vector u, Vector v)
-{
-  Vector result;
-  result.x = u.x - v.x;
-  result.y = u.y - v.y;
-  return result;
-}
-
-// calculate dot product of vectors
-double dot(Vector u, Vector v)
-{
-  double result = (u.x * v.x + u.y * v.y);
-  return result;
-}
-
-// calculate length of vector
-double length(Vector u)
-{
-   return sqrt(dot(u, u));
-}
-
-// multiply by scalar
-Vector multiply(Vector u, double s)
-{
-  Vector result;
-  result.x = u.x * s;
-  result.y = u.y * s;
-  return result;
-}
-
-// zero the vector
-void zero(Vector* u)
-{
-  u->x = 0;
-  u->y = 0;
 }
 
 ///////// BOID CODE /////////////
